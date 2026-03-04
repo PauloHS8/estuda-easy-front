@@ -6,6 +6,7 @@ import { Flashcard } from "@/types";
 import styles from "./styles.module.css";
 import { LuCheck, LuEye, LuX, LuPlus, LuPencil } from "react-icons/lu";
 import { Typography } from "../ui/typography";
+import { toast } from "sonner";
 
 interface FlashcardListProps {
   deckId: string;
@@ -98,7 +99,7 @@ export default function FlashcardList({ deckId }: FlashcardListProps) {
       setBackText("");
     } catch (error) {
       console.error("Erro ao salvar flashcard:", error);
-      alert("Falha ao salvar a carta. Verifique o console.");
+      toast.error("Falha ao salvar a carta.");
     }
   };
 
@@ -118,7 +119,7 @@ export default function FlashcardList({ deckId }: FlashcardListProps) {
       setBackText("");
     } catch (error) {
       console.error("Erro ao excluir flashcard:", error);
-      alert("Falha ao excluir a carta.");
+      toast.error("Falha ao excluir a carta.");
     }
   };
 

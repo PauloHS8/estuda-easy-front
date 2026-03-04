@@ -6,6 +6,7 @@ import ViewFlashcards from "@/components/ViewFlashcards/viewFlashcards";
 import { Deck } from "@/types";
 import DeckService from "@/services/deck/DeckService";
 import styles from "@/components/ViewFlashcards/styles.module.css";
+import { toast } from "sonner";
 
 export default function Flashcards() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -50,7 +51,7 @@ export default function Flashcards() {
       setDeckDescription("");
     } catch (error) {
       console.error("Erro ao salvar deck:", error);
-      alert("Falha ao salvar o deck. Verifique o console.");
+      toast.error("Falha ao salvar o deck.");
     }
   };
 
@@ -71,7 +72,7 @@ export default function Flashcards() {
       setDeckDescription("");
     } catch (error) {
       console.error("Erro ao excluir deck:", error);
-      alert("Falha ao excluir o deck.");
+      toast.error("Falha ao excluir o deck.");
     }
   };
 
