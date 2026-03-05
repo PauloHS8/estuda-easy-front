@@ -13,6 +13,8 @@ import EyeIcon from "@/assets/eyeicon.png";
 import { useAuth } from "@/context/auth/authContext";
 import { Button } from "@/components/ui/button";
 
+import { toast } from "sonner";
+
 export default function RegisterPage() {
   const { register, isLoading } = useAuth();
   const [name, setName] = useState("");
@@ -29,7 +31,7 @@ export default function RegisterPage() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("As senhas não coincidem!");
+      toast.error("As senhas não coincidem!");
       return;
     }
 
@@ -42,11 +44,11 @@ export default function RegisterPage() {
         phoneNumber: formattedPhone,
         birthdate: birthDate,
       });
-      await alert("Conta criada com sucesso!");
+      await toast.success("Conta criada com sucesso!");
       router.push("/login");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Erro ao criar conta.";
-      alert(message);
+      toast.error(message);
     }
   };
 

@@ -11,6 +11,7 @@ import GoogleIcon from "@/assets/_Google.png";
 import EyeIcon from "@/assets/eyeicon.png";
 import { useAuth } from "@/context/auth";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const { login, isLoading } = useAuth();
@@ -26,7 +27,7 @@ export default function LoginPage() {
       router.replace("/home");
     } catch (error) {
       console.log("Erro no login:", error);
-      alert("Erro no login");
+      toast.error("Erro ao fazer login. Verifique suas credenciais e tente novamente.");
     }
   };
 
