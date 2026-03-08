@@ -14,8 +14,6 @@ import { useAuth } from "@/context/auth/authContext";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-import { toast } from "sonner";
-
 export default function RegisterPage() {
   const { register, isLoading } = useAuth();
   const [name, setName] = useState("");
