@@ -7,7 +7,7 @@ import { CreateTaskModal } from "@/components/ViewTasks/components/CreateTaskMod
 import { useTasks } from "@/hooks/useTasks";
 
 export default function Tasks() {
-  const { selectedDate, refreshTasks } = useTasks();
+  const { selectedDate, setSelectedDate, tasks, refreshTasks } = useTasks();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -20,16 +20,20 @@ export default function Tasks() {
         onButtonClick={() => setIsModalOpen(true)}
       />
       <Page.Content>
-        <ViewTasks />
+        <ViewTasks
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          tasks={tasks}
+          refreshTasks={refreshTasks}
+        />
       </Page.Content>
 
-      {isModalOpen && (
-        <CreateTaskModal
-          selectedDate={selectedDate}
-          onSuccess={refreshTasks}
-          onClose={() => setIsModalOpen(false)}
-        />
-      )}
+      <CreateTaskModal
+        open={isModalOpen}
+        selectedDate={selectedDate}
+        onSuccess={refreshTasks}
+        onOpenChange={setIsModalOpen}
+      />
     </Page>
   );
 }

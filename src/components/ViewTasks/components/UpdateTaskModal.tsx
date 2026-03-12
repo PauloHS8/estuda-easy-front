@@ -7,14 +7,23 @@ import { taskSchema, TaskFormData } from "../schemas/taskSchema";
 import TaskService from "@/services/task/TaskService";
 import { TaskResponse } from "../../../types/task";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface Props {
+  open: boolean;
   task: TaskResponse;
   onSuccess: () => void;
-  onClose: () => void;
+  onOpenChange: (open: boolean) => void;
 }
 
-export function UpdateTaskModal({ task, onSuccess, onClose }: Props) {
+export function UpdateTaskModal({ open, task, onSuccess, onOpenChange }: Props) {
   const {
     register,
     handleSubmit,
@@ -51,7 +60,7 @@ export function UpdateTaskModal({ task, onSuccess, onClose }: Props) {
       });
 
       onSuccess();
-      onClose();
+      onOpenChange(false);
     } catch (error) {
       console.error("Erro ao atualizar tarefa:", error);
       toast.error("Não foi possível atualizar a tarefa.");
@@ -63,7 +72,7 @@ export function UpdateTaskModal({ task, onSuccess, onClose }: Props) {
       try {
         await TaskService.delete(task.id);
         onSuccess();
-        onClose();
+        onOpenChange(false);
       } catch (error) {
         console.error("Erro ao deletar:", error);
         toast.error("Erro ao excluir tarefa.");
@@ -72,23 +81,28 @@ export function UpdateTaskModal({ task, onSuccess, onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 text-gray-900">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl"
-      >
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-[#1A2E5A]">Editar Tarefa</h2>
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors text-sm font-bold"
-          >
-            Excluir
-          </button>
-        </div>
-
-        <div className="space-y-5">
+    <Dialog
+      open={open}
+      onOpenChange={(newOpen) => {
+        if (!isSubmitting) {
+          onOpenChange(newOpen);
+        }
+      }}
+    >
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <div className="flex justify-between items-center w-full">
+            <DialogTitle>Editar Tarefa</DialogTitle>
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors text-sm font-bold"
+            >
+              Excluir
+            </button>
+          </div>
+        </DialogHeader>
+        <form id="update-task-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-bold text-gray-700 ml-1">Título</label>
             <input
@@ -124,25 +138,16 @@ export function UpdateTaskModal({ task, onSuccess, onClose }: Props) {
               />
             </div>
           </div>
-        </div>
-
-        <div className="flex gap-4 mt-8">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 py-3.5 text-gray-500 font-bold hover:bg-gray-100 rounded-2xl"
-          >
+        </form>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
             Cancelar
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex-1 bg-blue-500 text-white py-3.5 rounded-2xl font-bold hover:bg-blue-600 disabled:bg-gray-300"
-          >
+          </Button>
+          <Button type="submit" form="update-task-form" disabled={isSubmitting}>
             {isSubmitting ? "Salvando..." : "Salvar Alterações"}
-          </button>
-        </div>
-      </form>
-    </div>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -88,13 +88,12 @@ export function TaskCard({ task, onRefresh }: { task: TaskResponse; onRefresh: (
         </span>
       </div>
 
-      {isEditModalOpen && (
-        <UpdateTaskModal
-          task={task}
-          onSuccess={onRefresh}
-          onClose={() => setIsEditModalOpen(false)}
-        />
-      )}
+      <UpdateTaskModal
+        open={isEditModalOpen}
+        task={task}
+        onSuccess={onRefresh}
+        onOpenChange={setIsEditModalOpen}
+      />
     </>
   );
 }

@@ -2,15 +2,25 @@
 
 import { Typography } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
-import { useTasks } from "@/hooks/useTasks";
 import { format, addMonths, subMonths, addDays, subDays, isSameDay, startOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { TaskCard } from "./components/TaskCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { TaskResponse } from "@/types/task";
 
-export default function Tasks() {
-  const { selectedDate, setSelectedDate, tasks, refreshTasks } = useTasks();
+interface ViewTasksProps {
+  selectedDate: Date;
+  setSelectedDate: (date: Date) => void;
+  tasks: TaskResponse[];
+  refreshTasks: () => void;
+}
 
+export default function Tasks({
+  selectedDate,
+  setSelectedDate,
+  tasks,
+  refreshTasks,
+}: ViewTasksProps) {
   const days = Array.from({ length: 17 }, (_, i) => addDays(subDays(selectedDate, 8), i));
 
   const handleNextMonth = () => {
