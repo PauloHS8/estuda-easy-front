@@ -55,7 +55,6 @@ export function CreateDiaryModal({ open, selectedDate, onSuccess, onOpenChange }
 
   const onSubmit = async (data: DiaryFormData) => {
     try {
-      // 1. Cria o diário (texto)
       const response = await DiaryService.create({
         title: data.title,
         content:
@@ -64,16 +63,13 @@ export function CreateDiaryModal({ open, selectedDate, onSuccess, onOpenChange }
 
       const createdDiary = response.data;
 
-      // 2. Envia o áudio garantindo o MIME TYPE
       if (createdDiary?.id && audioBlob) {
         const audioFormData = new FormData();
 
-        // Criamos o arquivo explicitamente com o tipo audio/webm para o NestJS identificar
         const audioFile = new File([audioBlob], "audio.webm", {
           type: "audio/webm",
         });
 
-        // 'file' é a chave que seu colega confirmou
         audioFormData.append("file", audioFile);
 
         await DiaryService.uploadAudio(createdDiary.id, audioFormData);
