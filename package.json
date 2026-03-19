@@ -37,6 +37,7 @@
     "tailwind-merge": "^3.5.0",
     "tldraw": "^4.4.1",
     "vaul": "^1.1.2",
+    "wavesurfer.js": "^7.12.4",
     "zod": "^4.3.6"
   },
   "devDependencies": {
