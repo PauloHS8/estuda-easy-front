@@ -7,29 +7,34 @@ import { CreateTaskModal } from "@/components/ViewTasks/components/CreateTaskMod
 import { useTasks } from "@/hooks/useTasks";
 
 export default function Tasks() {
-  const { selectedDate, refreshTasks } = useTasks();
+  const { selectedDate, setSelectedDate, tasks, refreshTasks } = useTasks();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <Page>
       <Page.Header
-        title="Tarefas"
-        subtitle="Organize suas tarefas e otimize seu tempo com nosso gerenciador de tarefas eficiente!"
+        title="Tasks"
+        subtitle="Organize-se e otimize seu tempo com nosso gerenciador de tarefas!"
         showButton
-        buttonText="Criar tarefa"
+        buttonText="Criar task"
         onButtonClick={() => setIsModalOpen(true)}
       />
       <Page.Content>
-        <ViewTasks />
+        <ViewTasks
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          tasks={tasks}
+          refreshTasks={refreshTasks}
+          onCreateTask={() => setIsModalOpen(true)}
+        />
       </Page.Content>
 
-      {isModalOpen && (
-        <CreateTaskModal
-          selectedDate={selectedDate}
-          onSuccess={refreshTasks}
-          onClose={() => setIsModalOpen(false)}
-        />
-      )}
+      <CreateTaskModal
+        open={isModalOpen}
+        selectedDate={selectedDate}
+        onSuccess={refreshTasks}
+        onOpenChange={setIsModalOpen}
+      />
     </Page>
   );
 }

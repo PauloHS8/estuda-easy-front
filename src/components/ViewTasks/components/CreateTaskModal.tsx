@@ -2,18 +2,26 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { setHours, setMinutes } from "date-fns";
 import { taskSchema, TaskFormData } from "../schemas/taskSchema";
 import TaskService from "@/services/task/TaskService";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface Props {
+  open: boolean;
   selectedDate: Date;
   onSuccess: () => void;
-  onClose: () => void;
+  onOpenChange: (open: boolean) => void;
 }
 
-export function CreateTaskModal({ selectedDate, onSuccess, onClose }: Props) {
+export function CreateTaskModal({ open, selectedDate, onSuccess, onOpenChange }: Props) {
   const {
     register,
     handleSubmit,
@@ -27,35 +35,42 @@ export function CreateTaskModal({ selectedDate, onSuccess, onClose }: Props) {
       const [startH, startM] = data.startTime.split(":").map(Number);
       const [endH, endM] = data.endTime.split(":").map(Number);
 
-      const startDate = setMinutes(setHours(selectedDate, startH), startM).toISOString();
-      const endDate = setMinutes(setHours(selectedDate, endH), endM).toISOString();
+      const startDateObj = new Date(selectedDate);
+      startDateObj.setHours(startH, startM, 0, 0);
+
+      const endDateObj = new Date(selectedDate);
+      endDateObj.setHours(endH, endM, 0, 0);
 
       await TaskService.create({
         name: data.name,
         description: data.description,
-        startDate,
-        endDate,
+        startDate: startDateObj.toISOString(),
+        endDate: endDateObj.toISOString(),
         status: "pending",
       });
 
       onSuccess();
-      onClose();
+      onOpenChange(false);
     } catch (error) {
-      alert("Erro ao criar tarefa. Verifique a sua conexão.");
       console.error("Erro ao criar tarefa:", error);
       toast.error("Erro ao criar tarefa.");
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl border border-gray-100"
-      >
-        <h2 className="text-2xl font-bold text-[#1A2E5A] mb-6">Criar Nova Tarefa</h2>
-
-        <div className="space-y-5">
+    <Dialog
+      open={open}
+      onOpenChange={(newOpen) => {
+        if (!isSubmitting) {
+          onOpenChange(newOpen);
+        }
+      }}
+    >
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Criar Nova Tarefa</DialogTitle>
+        </DialogHeader>
+        <form id="create-task-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-bold text-gray-700 ml-1">Título da Tarefa</label>
             <input
@@ -99,25 +114,16 @@ export function CreateTaskModal({ selectedDate, onSuccess, onClose }: Props) {
               )}
             </div>
           </div>
-        </div>
-
-        <div className="flex gap-4 mt-8">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 py-3.5 text-gray-500 font-bold hover:bg-gray-100 rounded-2xl transition-all"
-          >
+        </form>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
             Cancelar
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex-1 bg-[#3B82F6] text-white py-3.5 rounded-2xl font-bold shadow-lg shadow-blue-500/30 hover:bg-blue-600 disabled:bg-gray-300 transition-all"
-          >
+          </Button>
+          <Button type="submit" form="create-task-form" disabled={isSubmitting}>
             {isSubmitting ? "A guardar..." : "Salvar Tarefa"}
-          </button>
-        </div>
-      </form>
-    </div>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
