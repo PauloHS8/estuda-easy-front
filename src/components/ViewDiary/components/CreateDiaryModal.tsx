@@ -55,28 +55,38 @@ export function CreateDiaryModal({ open, selectedDate, onSuccess, onOpenChange }
 
   const onSubmit = async (data: DiaryFormData) => {
     try {
-      const formData = new FormData();
-      formData.append("title", data.title);
-      formData.append(
-        "content",
-        data.content ||
-          `[Pensamento criado em ${new Date(selectedDate).toLocaleDateString("pt-BR")}]`,
-      );
+      // 1. Cria o diário (texto)
+      const response = await DiaryService.create({
+        title: data.title,
+        content:
+          data.content || `[Pensamento em ${new Date(selectedDate).toLocaleDateString("pt-BR")}]`,
+      });
 
-      if (audioBlob) {
-        formData.append("audioFile", audioBlob, "audio.webm");
+      const createdDiary = response.data;
+
+      // 2. Envia o áudio garantindo o MIME TYPE
+      if (createdDiary?.id && audioBlob) {
+        const audioFormData = new FormData();
+
+        // Criamos o arquivo explicitamente com o tipo audio/webm para o NestJS identificar
+        const audioFile = new File([audioBlob], "audio.webm", {
+          type: "audio/webm",
+        });
+
+        // 'file' é a chave que seu colega confirmou
+        audioFormData.append("file", audioFile);
+
+        await DiaryService.uploadAudio(createdDiary.id, audioFormData);
       }
 
-      await DiaryService.create(formData);
-
-      toast.success("Pensamento adicionado ao diário!");
+      toast.success("Pensamento e áudio salvos!");
       reset();
       clearRecording();
       onSuccess();
       onOpenChange(false);
     } catch (error) {
-      console.error("Erro ao criar diário:", error);
-      toast.error("Erro ao adicionar pensamento.");
+      console.error("Erro completo:", error);
+      toast.error("Erro ao salvar pensamento ou áudio.");
     }
   };
 
