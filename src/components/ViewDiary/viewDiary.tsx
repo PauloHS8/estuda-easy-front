@@ -112,7 +112,7 @@ export default function ViewDiary({
         {selectedDateDiaries.length === 0 ? (
           <EmptyToolState
             title="Nada por aqui... (ainda!)"
-            description="Adicione um pensamento e comece a descrever seu dia."
+            description="Adicione um pensamento e comece a descrever o que estudou hoje."
             actionLabel="Adicionar pensamento"
             onAction={onCreateDiary}
           />
