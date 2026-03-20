@@ -8,7 +8,7 @@ import {
   SidebarGroup,
   SidebarGroupAction,
   SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarSeparator,
 } from "../ui/sidebar";
@@ -18,6 +18,9 @@ import NavItem, { NavItemProps } from "./navItem";
 import CollapsibleNavItem from "./collapsibleNavItem";
 import { NavUser } from "./navUser";
 import { useAuth } from "@/context/auth";
+import Image from "next/image";
+import LogoPrincipal from "@/assets/EstudaEasyLogoPrincipal.png";
+import LogoReduzida from "@/assets/EstudaEasyLogoReduzida.png";
 
 type IconComponent = ComponentType<{ size?: number | string } | LucideProps>;
 
@@ -73,26 +76,26 @@ export default function AppSidebar({ ...props }: React.ComponentProps<typeof Sid
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      {/* Logo Header */}
-      <div className="px-4 py-4 border-b border-gray-200 flex items-center space-x-2">
-        <div
-          style={{ backgroundColor: "#3461fd" }}
-          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-        >
-          <GraduationCap className="w-5 h-5 text-white" />
-        </div>
-        <span className="font-bold text-sm text-gray-900 truncate group-data-[collapsible=icon]:hidden">
-          EstudaEasy
-        </span>
-      </div>
+      <SidebarHeader className="items-start border-b border-sidebar-border/60 px-4 py-2 pt-10 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-0">
+        <Image
+          src={LogoPrincipal}
+          alt="EstudaEasy"
+          className="h-auto w-30 object-contain group-data-[collapsible=icon]:hidden"
+          priority
+        />
+        <Image
+          src={LogoReduzida}
+          alt="EstudaEasy"
+          className="hidden h-6 w-6 origin-center object-contain group-data-[collapsible=icon]:block group-data-[collapsible=icon]:scale-125"
+          priority
+        />
+      </SidebarHeader>
 
       <SidebarContent>
         {NAV_GROUPS.map((group, groupIndex) => (
           <div key={group.label}>
             {groupIndex > 0 && <SidebarSeparator />}
             <SidebarGroup>
-              <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
-
               {group.action && (
                 <SidebarGroupAction title={group.action.label} onClick={group.action.onClick}>
                   <group.action.icon size={16} />
