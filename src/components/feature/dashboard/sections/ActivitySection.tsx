@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { LuBrain, LuTimer, LuBookOpen, LuBook, LuX } from "react-icons/lu";
 import { useActivities } from "@/hooks/useActivities";
 import { formatTimeAgo, activityStorage } from "@/lib/activityStorage";
+import LoadingState from "@/components/LoadingState";
 
 const iconMap = {
   LuBrain: LuBrain,
